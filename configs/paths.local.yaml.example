@@ -1,0 +1,22 @@
+# Local paths override (copy to paths.local.yaml and customize)
+# This file is git-ignored to allow per-machine customization
+
+paths:
+  data_root: "/path/to/your/local/data"
+  cache_dir: "/path/to/your/local/cache" 
+  model_cache: "/path/to/your/model/cache"
+  output_dir: "/path/to/your/outputs"
+  
+  # Dataset-specific paths
+  kitti_root: "/path/to/kitti"
+  nuscenes_root: "/path/to/nuscenes"
+  nyuv2_root: "/path/to/nyuv2"
+  
+  # Model weights
+  vila_checkpoint: "/path/to/vila/checkpoint"
+  custom_checkpoint: "/path/to/your/trained/model"
+
+# Hardware-specific settings
+device:
+  cuda_visible_devices: "0,1,2,3"  # adjust for your GPU setup
+  num_workers: 8  # adjust for your CPU cores

@@ -1,0 +1,77 @@
+# Ablation study configurations
+# PS3 sweeps, different heads, depth estimators
+
+defaults:
+  - base
+
+# Override for ablation experiments
+experiment_name: "ablation_study"
+
+# PS3 Parameter Sweeps
+ps3_sweep:
+  num_look_close: [1, 2, 3, 4]
+  num_token_look_close: [1024, 2048, 4096]
+  select_num_each_scale: 
+    - "128+256"
+    - "256+512" 
+    - "512+1024"
+
+# Depth Estimator Comparison
+depth_sweep:
+  estimators:
+    midas_small:
+      estimator: "midas"
+      model_type: "MiDaS_small"
+    midas_large:
+      estimator: "midas" 
+      model_type: "DPT_Large"
+    zoe_nk:
+      estimator: "zoe"
+      model_type: "ZoeD_NK"
+    zoe_n:
+      estimator: "zoe"
+      model_type: "ZoeD_N"
+
+# Head Architecture Comparison
+head_sweep:
+  architectures:
+    small_mlp:
+      type: "mlp"
+      hidden_dims: [256, 128]
+      output_dim: 1
+    medium_mlp:
+      type: "mlp"
+      hidden_dims: [512, 256, 128]
+      output_dim: 1
+    large_mlp:
+      type: "mlp"
+      hidden_dims: [1024, 512, 256, 128]
+      output_dim: 1
+    vector_output:
+      type: "mlp"
+      hidden_dims: [512, 256]
+      output_dim: 3  # x, y, z distance vector
+    lora_adapter:
+      type: "lora"
+      rank: 16
+      alpha: 32
+      dropout: 0.1
+
+# Training variations
+training_sweep:
+  learning_rates: [1e-5, 5e-5, 1e-4, 5e-4]
+  batch_sizes: [1, 2, 4]
+  epochs: [5, 10, 20]
+
+# Distance augmentation strategies
+augmentation_sweep:
+  strategies:
+    concat:
+      method: "concat"
+      normalize_distance: true
+    projection:
+      method: "project"
+      projection_dim: 128
+    attention:
+      method: "attention"
+      num_heads: 8
