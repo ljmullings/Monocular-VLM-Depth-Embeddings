@@ -1,64 +1,52 @@
-# Base configuration for MVDE experiments
-# Default settings for inference and training
-
 model:
-  vila:
-    model_name: "Efficient-Large-Model/VILA1.5-8b"
-    device_map: "auto"
-    torch_dtype: "float16"
-    trust_remote_code: true
-    
-  ps3:
-    num_look_close: 2
-    num_token_look_close: 2048
-    select_num_each_scale: "256+512"
-    
-  depth:
-    estimator: "midas"  # "midas" or "zoe"
-    model_type: "DPT_Large"  # for MiDaS
-    device: "cuda"
-    
-  head:
-    type: "mlp"  # "mlp" or "lora"
-    hidden_dims: [512, 256, 128]
-    output_dim: 1  # scalar distance
-    dropout: 0.1
-    activation: "relu"
+  name: nvidia/VILA-HD-8B-PS3-1.5K-SigLIP2
+  precision: int8         # int4/int8/fp16
+  device_map: auto
 
-data:
-  image_size: [384, 384]
-  normalize: true
-  augment: false
+# SigLIP Vision Transformer Configuration
+vit:
+  name: google/siglip-base-patch16-384   # SigLIP vision checkpoint
+  patch: 16
+  tap_layers: [-18, -12, -6, -2]         # Multi-scale feature extraction layers
+  select_feature: patch                  # Drop CLS token for spatial features
+  image_size: 896                        # High-resolution input (can push higher than 384)
+
+# DPT Decoder Configuration
+decoder:
+  c_dec: 256                            # Decoder channel dimension
+  blocks: 4                             # Number of refinement blocks
+  scale_invariant: true                 # Use scale-invariant depth prediction
+
+ps3:
+  num_look_close: 2
+  num_token_look_close: 2048
+  select_num_each_scale: "256+512"
+  look_close_mode: after_prompt
+
+depth:
+  backend: zoedepth        # or midas (legacy depth estimators for comparison)
+  input_size: 896
+  normalize: true          # scale-invariant normalization
+
+detector:
+  backend: yolo
+  conf_thres: 0.4
+
+head:
+  type: mlp
+  hidden_dims: [1024, 256]
+  dropout: 0.1
+  output: scalar           # scalar or 3d_vector
+
+train:
+  res: 896                              # Training resolution (matches vit.image_size)
+  freeze_backbone_steps: 20000          # Freeze SigLIP for initial steps
+  lora_rank: 8
+  lr: 2e-4
   batch_size: 1
-  
+  epochs: 3
+  grad_accum: 4
+
 paths:
-  data_root: "${oc.env:DATA_ROOT,./data}"
-  cache_dir: "${oc.env:CACHE_DIR,./cache}"
-  output_dir: "./runs"
-  log_dir: "./runs/logs"
-
-training:
-  epochs: 10
-  learning_rate: 1e-4
-  weight_decay: 1e-5
-  warmup_steps: 100
-  gradient_clip: 1.0
-  save_every: 2
-  eval_every: 1
-  
-inference:
-  max_tokens: 512
-  temperature: 0.7
-  top_p: 0.9
-  do_sample: true
-
-logging:
-  level: "INFO"
-  wandb:
-    project: "${oc.env:WANDB_PROJECT,mvde-experiments}"
-    entity: "${oc.env:WANDB_ENTITY,null}"
-    tags: ["base", "vila", "depth"]
-
-device:
-  cuda_visible_devices: "${oc.env:CUDA_VISIBLE_DEVICES,0}"
-  mixed_precision: true
+  data_root: ./data
+  out_root: ./runs/exp01a
