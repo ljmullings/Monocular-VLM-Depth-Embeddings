@@ -111,9 +111,11 @@ See [LICENSE](LICENSE) and `NOTICE.md` for details.
 - [NVIDIA VILA-HD](https://github.com/Efficient-Large-Model/VILA) for the base VLM.
 - [MiDaS](https://github.com/isl-org/MiDaS), [ZoeDepth](https://github.com/isl-org/ZoeDepth) for monocular depth estimation.
 - [KITTI-DEPTH] (https://www.cvlibs.net/datasets/kitti/eval_depth.php?benchmark=depth_prediction) for benchmarking dataset.
-  - @inproceedings{Uhrig2017THREEDV,
+  ```bibtex
+  @inproceedings{Uhrig2017THREEDV,
   author = {Jonas Uhrig and Nick Schneider and Lukas Schneider and Uwe Franke and Thomas Brox and Andreas Geiger},
   title = {Sparsity Invariant CNNs},
   booktitle = {International Conference on 3D Vision (3DV)},
-  year = {2017} 
+  year = {2017}
+  ```
 - Independent research project maintained by Laura Mullings.
