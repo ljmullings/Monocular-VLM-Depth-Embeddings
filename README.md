@@ -18,7 +18,7 @@ We build on [NVIDIA VILA-HD-8B-PS3-1.5K-SigLIP2](https://github.com/Efficient-La
 - Scripts for inference, adapter/LoRA training, and embedding visualization.
 - Example configs for PS3 patch budgets (`NUM_LOOK_CLOSE`, `NUM_TOKEN_LOOK_CLOSE`).
 
-## Installation
+## Installation:
 
 ```bash
 git clone 
